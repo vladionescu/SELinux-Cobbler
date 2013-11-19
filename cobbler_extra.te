@@ -1,0 +1,17 @@
+
+module cobblerd_extra 1.0;
+
+require {
+	type etc_t;
+	type httpd_t;
+	type cobblerd_t;
+	type cobbler_var_lib_t;
+	class file { write create rename unlink };
+	class dir { write add_name remove_name };
+}
+
+#============= cobblerd_t ==============
+allow cobblerd_t etc_t:file write;
+allow httpd_t cobblerd_t:file write;
+allow httpd_t cobbler_var_lib_t:file { write create rename unlink };
+allow httpd_t cobbler_var_lib_t:dir { write add_name remove_name };
