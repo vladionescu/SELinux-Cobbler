@@ -1,17 +1,34 @@
 
-module cobblerd_extra 1.0;
+module cobblerd_extra 1.1;
 
 require {
 	type etc_t;
+	type home_root_t;
 	type httpd_t;
+	type devlog_t;
+	type syslogd_t;
+	type kerberos_port_t;
 	type cobblerd_t;
 	type cobbler_var_lib_t;
+	class process { execmem setfscreate };
+	class capability { setuid setgid };
 	class file { write create rename unlink };
-	class dir { write add_name remove_name };
+	class dir { write add_name remove_name search };
+	class sock_file { write create };
+	class netlink_audit_socket create;
+	class unix_dgram_socket sendto;
+	class tcp_socket name_connect;
 }
 
 #============= cobblerd_t ==============
 allow cobblerd_t etc_t:file write;
+allow cobblerd_t self:process { execmem setfscreate };
+allow cobblerd_t self:capability { setuid setgid };
 allow httpd_t cobblerd_t:file write;
 allow httpd_t cobbler_var_lib_t:file { write create rename unlink };
 allow httpd_t cobbler_var_lib_t:dir { write add_name remove_name };
+allow cobblerd_t home_root_t:dir search;
+allow cobblerd_t devlog_t:sock_file { write create };
+allow cobblerd_t self:netlink_audit_socket create;
+allow cobblerd_t syslogd_t:unix_dgram_socket sendto;
+allow cobblerd_t kerberos_port_t:tcp_socket name_connect;
