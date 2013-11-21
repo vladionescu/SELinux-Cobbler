@@ -1,5 +1,4 @@
-
-module cobblerd_extra 1.1;
+module cobbler_extra 1.2;
 
 require {
 	type default_context_t;
