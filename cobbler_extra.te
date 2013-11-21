@@ -7,6 +7,7 @@ require {
 	type etc_t;
 	type home_root_t;
 	type httpd_t;
+	type chkpwd_exec_t;
 	type devlog_t;
 	type syslogd_t;
 	type shadow_t;
@@ -15,10 +16,10 @@ require {
 	type cobbler_var_lib_t;
 	class process { execmem setfscreate };
 	class capability { setuid setgid audit_write };
-	class file { read write open create rename unlink getattr };
+	class file { read write open create rename unlink getattr execute execute_no_trans };
 	class dir { write add_name remove_name search };
 	class sock_file { write create };
-	class netlink_audit_socket { create nlmsg_relay };
+	class netlink_audit_socket { read write create nlmsg_relay };
 	class unix_dgram_socket sendto;
 	class tcp_socket name_connect;
 }
@@ -33,9 +34,10 @@ allow cobblerd_t self:capability { setuid setgid audit_write };
 allow httpd_t cobblerd_t:file write;
 allow httpd_t cobbler_var_lib_t:file { write create rename unlink };
 allow httpd_t cobbler_var_lib_t:dir { write add_name remove_name };
+allow cobblerd_t chkpwd_exec_t:file { read open execute execute_no_trans };
 allow cobblerd_t home_root_t:dir search;
 allow cobblerd_t devlog_t:sock_file { write create };
 allow cobblerd_t shadow_t:file { open read getattr };
-allow cobblerd_t self:netlink_audit_socket { create nlmsg_relay };
+allow cobblerd_t self:netlink_audit_socket { read write create nlmsg_relay };
 allow cobblerd_t syslogd_t:unix_dgram_socket sendto;
 allow cobblerd_t kerberos_port_t:tcp_socket name_connect;
