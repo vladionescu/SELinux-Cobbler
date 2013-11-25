@@ -2,6 +2,7 @@ module cobbler_extra 1.2;
 
 require {
 	type default_context_t;
+	type file_t;
 	type file_context_t;
 	type etc_t;
 	type home_root_t;
@@ -16,7 +17,7 @@ require {
 	class process { execmem setfscreate };
 	class capability { setuid setgid audit_write };
 	class file { read write open create rename unlink getattr execute execute_no_trans };
-	class dir { write add_name remove_name search };
+	class dir { read write open add_name remove_name search getattr };
 	class sock_file { write create };
 	class netlink_audit_socket { read write create nlmsg_relay };
 	class unix_dgram_socket sendto;
@@ -25,6 +26,8 @@ require {
 
 #============= cobblerd_t ==============
 allow cobblerd_t default_context_t:dir search;
+allow cobblerd_t file_t:dir { read open search getattr };
+allow cobblerd_t file_t:file { read open getattr };
 allow cobblerd_t file_context_t:dir search;
 allow cobblerd_t file_context_t:file { read open getattr };
 allow cobblerd_t etc_t:file write;
