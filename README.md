@@ -5,23 +5,21 @@ SELinux policy for Cobbler 2.4 on RHEL 6.4
 
 SELinux complains a lot if you install Cobbler, even with Cobbler's own policy, included in the cobbler package.
 
-This policy enables TFTP to work properly, as well as the web GUI which is available in the cobbler-web package.
+This policy enables TFTP, rsync, distro/repo importing, the web GUI which is available in the cobbler-web package, and PAM authentication for cobbler-web (Kerberos supported!).
 
 Installation
 ------------
 
-You only need the .pp files to load with semodule, like so.
+You only need to load the .pp file with semodule, like so.
 
     semodule -i cobbler_extra.pp
-
-That's enough effort for now, go take a break.
 
 Developing
 ----------
 
 If you'd like to edit the policy, be my guest!
 
-Make your changes in the .te file(s), and build them into a .pp file like so.
+Make your changes in the .te file, and build it into a .pp file like so.
 
 First run this to check the .te for any issues, and fix those that come up. The -o parameter specifies the output for the .mod file it generates, and the last parameter is your .te file.
 
@@ -46,3 +44,16 @@ Re-enable it with
 And remove it for good with
 
     semodule -r cobbler_extra
+
+Troubleshooting
+---------------
+
+If you're developing and running into silent denials (you can't do something, but turning SELinux off let's you do that, with no AVC messages in audit.log) you can disable the dontaudit rules with the following command.
+
+    semodule -DB
+
+Now everything will be logged! This is very useful for developing policy.
+
+Rebuild policy and enable dontaudit rules when you're done.
+
+    semodule -B
